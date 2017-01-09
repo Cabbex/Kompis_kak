@@ -16,7 +16,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
+/bower_components
+/nbproject
 # =========================
 # Operating System Files
 # =========================
