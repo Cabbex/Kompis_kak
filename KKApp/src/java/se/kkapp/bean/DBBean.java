@@ -2,8 +2,11 @@
 package se.kkapp.bean;
 
 import com.mysql.jdbc.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.json.JsonArray;
 import se.kkapp.support.ConnectionFactory;
@@ -39,5 +42,18 @@ public class DBBean {
             System.out.println("Fail på getRecept: "+ e);
         }
         return null;
+    }
+
+    public boolean removeRecept(int id) {
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt = connection.prepareStatement("DELETE FROM recept WHERE recept.ID = ?");
+            stmt.setInt(1, id);
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("RemoveRecept error: "+ex);
+        }
+        return false;
     }
 }
