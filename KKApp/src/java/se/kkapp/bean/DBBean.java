@@ -26,21 +26,48 @@ public class DBBean {
         try {
             Connection connection = ConnectionFactory.createConnection();
             Statement stmt = connection.createStatement();
-            String sql = "SELECT * FROM recept";
+            String sql = "SELECT * FROM inforecept";
             ResultSet data = stmt.executeQuery(sql);
             JsonArrayBuilder JAB = Json.createArrayBuilder();
             while (data.next()) {
-                String name = data.getString("name");
+                String name = data.getString("ReceptNamn");
                 String desc = data.getString("description");
+                String tag = data.getString("TagNamn");
+                String author = data.getString("Author");
 
                 JAB.add(Json.createObjectBuilder()
                         .add("name", name)
-                        .add("desc", desc));
+                        .add("desc", desc)
+                        .add("tagnamn:", tag)
+                        .add("author", author));
             }
             connection.close();
             return JAB.build();
         } catch (Exception e) {
             System.out.println("Fail på getRecept: " + e);
+        }
+        return null;
+    }
+    
+    public JsonArray getIngrediense(int id) {
+        try {          
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM infoingrediense WHERE recept_id = ?");
+            stmt.setInt(1, id);
+            ResultSet data = stmt.executeQuery();
+            JsonArrayBuilder JAB = Json.createArrayBuilder();
+            while (data.next()) {
+                String name = data.getString("name");
+                String desc = data.getString("amount");
+
+                JAB.add(Json.createObjectBuilder()
+                        .add("name", name)
+                        .add("amount", desc));
+            }
+            connection.close();
+            return JAB.build();
+        } catch (Exception e) {
+            System.out.println("Fail på getIngrediense: " + e);
         }
         return null;
     }
@@ -68,7 +95,7 @@ public class DBBean {
             "rname": "Pannkaka",
             "description": "mm pannkaka",
             "author": "Casper Bjork",
-            "tag": "Efterrätt"
+            "tag": "Efterrätt" 
         }]
      */
     public boolean postRecept(String body) {
@@ -116,6 +143,85 @@ public class DBBean {
             return true;
         } catch (Exception ex) {
             System.out.println("PUTRecept error: " + ex);
+        }
+        return false;
+    }
+
+    /*
+        Used for testing!
+        [
+            {
+            "recipe_id": 2,
+            "amount": "4 tsk",
+            "ingrediens": 1
+            },
+            {
+            "recipe_id": 3,
+            "amount": "5 tsk",
+            "ingrediens": 1
+            }
+    ]
+     */
+    public boolean postIngrediens(String body) {
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt;
+            JsonReader jsr = Json.createReader(new StringReader(body));
+            JsonArray jsondata = jsr.readArray();
+            int size = jsondata.size();
+            for (int i = 1; i <= size; i++) {
+                JsonObject jsono = jsondata.getJsonObject(i - 1);
+                int recipe_id = jsono.getInt("recipe_id");
+                String amount = jsono.getString("amount");
+                int ingrediant_id = jsono.getInt("ingrediens");
+                stmt = connection.prepareStatement("INSERT INTO `recept_collective`(`recept_id`, `amount`, `ing_id`) VALUES (?,?,?)");
+                stmt.setInt(1, recipe_id);
+                stmt.setString(2, amount);
+                stmt.setInt(3, ingrediant_id);
+                stmt.executeUpdate();
+            }
+            return true;
+        } catch (Exception exception) {
+            System.out.println("postIngrediens: " + exception);
+        }
+        return false;
+    }
+
+    /*  Used for testing! 
+    [
+            {
+            "amount": "4 tsk",
+            "ingrediense": 1
+            },
+            {
+            "amount": "5 tsk",
+            "ingrediense": 1
+            }
+        ]
+    */
+    
+    public boolean putIngrediense(String body, int id) {
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt;
+            JsonReader jsr = Json.createReader(new StringReader(body));
+            JsonArray jsondata = jsr.readArray();
+            int size = jsondata.size();
+            for (int i = 1; i <= size; i++) {
+                JsonObject jsono = jsondata.getJsonObject(i - 1);
+                String amount = jsono.getString("amount");
+                int ingrediant_id = jsono.getInt("ingrediense");
+                stmt = connection.prepareStatement("UPDATE `recept_collective` SET `recept_id`=?,`amount`=?,`ing_id`=? WHERE recept_collective.recept_id = ? AND recept_collective.ing_id = ?");
+                stmt.setInt(1, id);
+                stmt.setString(2, amount);
+                stmt.setInt(3, ingrediant_id);
+                stmt.setInt(4, id);
+                stmt.setInt(5, ingrediant_id);
+                stmt.executeUpdate();
+            }
+            return true;
+        } catch (Exception exception) {
+            System.out.println("putIngrediense: " + exception);
         }
         return false;
     }

@@ -43,30 +43,60 @@ public class Webservice {
 
         return Response.ok(data).build();
     }
-    
+
     @DELETE
     @Path("/recept/{id}")
-    public Response removeRecept(@PathParam("id") int id){
-        if (!DBB.removeRecept(id)){
+    public Response removeRecept(@PathParam("id") int id) {
+        if (!DBB.removeRecept(id)) {
             return Response.serverError().build();
         }
         return Response.ok().build();
     }
-    
+
     @POST
     @Path("/recept")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response postRecept(String body){
-        if(!DBB.postRecept(body)){
+    public Response postRecept(String body) {
+        if (!DBB.postRecept(body)) {
             return Response.serverError().build();
         }
         return Response.ok().build();
     }
-    
+
     @PUT
     @Path("/recept/{id}")
-    public Response putRecept(String body, @PathParam("id") int id){
-        if(!DBB.putRecept(body, id)){
+    public Response putRecept(String body, @PathParam("id") int id) {
+        if (!DBB.putRecept(body, id)) {
+            return Response.serverError().build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/ingrediense/{id}")
+    public Response getIngrediens(@PathParam("id") int id) {
+        JsonArray data = DBB.getIngrediense(id);
+
+        if (data == null) {
+            return Response.serverError().build();
+        }
+        return Response.ok(data).build();
+    }
+    
+    @POST
+    @Path("/ingrediense")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response postIngrediens(String body) {
+        if (!DBB.postIngrediens(body)) {
+            return Response.serverError().build();
+        }
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/ingrediense/{id}")
+    public Response putIngrediens(String body, @PathParam("id") int id) {
+        if (!DBB.putIngrediense(body, id)) {
             return Response.serverError().build();
         }
         return Response.ok().build();
