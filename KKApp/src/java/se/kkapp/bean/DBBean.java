@@ -30,10 +30,10 @@ public class DBBean {
             ResultSet data = stmt.executeQuery(sql);
             JsonArrayBuilder JAB = Json.createArrayBuilder();
             while (data.next()) {
-                String name = data.getString("ReceptNamn");
+                String name = data.getString("ReceptName");
                 String desc = data.getString("description");
-                String tag = data.getString("TagNamn");
-                String author = data.getString("Author");
+                String tag = data.getString("tagname");
+                String author = data.getString("author");
 
                 JAB.add(Json.createObjectBuilder()
                         .add("name", name)

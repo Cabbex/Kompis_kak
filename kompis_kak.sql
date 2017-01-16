@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Värd: 127.0.0.1
--- Tid vid skapande: 13 jan 2017 kl 14:04
--- Serverversion: 10.1.16-MariaDB
--- PHP-version: 5.6.24
+-- Tid vid skapande: 16 jan 2017 kl 21:37
+-- Serverversion: 10.1.13-MariaDB
+-- PHP-version: 5.6.23
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -56,10 +56,10 @@ CREATE TABLE `infoingrediense` (
 --
 CREATE TABLE `inforecept` (
 `ID` int(11)
-,`ReceptNamn` varchar(75)
+,`ReceptName` varchar(75)
 ,`description` varchar(150)
-,`TagNamn` varchar(45)
-,`Author` varchar(45)
+,`author` varchar(45)
+,`tagname` varchar(45)
 );
 
 -- --------------------------------------------------------
@@ -95,6 +95,14 @@ CREATE TABLE `recept` (
   `tag_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumpning av Data i tabell `recept`
+--
+
+INSERT INTO `recept` (`ID`, `name`, `description`, `author_id`, `tag_id`) VALUES
+(2, 'Sockerkaka', 'MMMMMMMMMMMMMMMMMMMMMMMM energi', 2, 1),
+(3, 'Pannkaka', 'mmjfioaejfioeajgoaehgoiaehgoiae pannkaka', 2, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -112,8 +120,8 @@ CREATE TABLE `recept_collective` (
 --
 
 INSERT INTO `recept_collective` (`recept_id`, `amount`, `ing_id`) VALUES
-(1, '2 tsk', 1),
-(1, '2 liter', 2);
+(2, '44 tsk', 1),
+(2, '55 liter', 2);
 
 -- --------------------------------------------------------
 
@@ -137,22 +145,23 @@ INSERT INTO `tag` (`ID`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur `user`
+-- Tabellstruktur `users`
 --
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `ID` int(11) NOT NULL,
   `Name` varchar(45) NOT NULL,
+  `password` varchar(300) NOT NULL,
   `Privileges` int(3) NOT NULL DEFAULT '1',
   `Fav_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumpning av Data i tabell `user`
+-- Dumpning av Data i tabell `users`
 --
 
-INSERT INTO `user` (`ID`, `Name`, `Privileges`, `Fav_ID`) VALUES
-(1, 'Casper Bjork', 3, 1);
+INSERT INTO `users` (`ID`, `Name`, `password`, `Privileges`, `Fav_ID`) VALUES
+(2, 'Casper', '$2a$10$oIkbZXmVmhu/bM.Q0iDGEON0u6FyVagXq73fea4j25ygY/Uc86Phe', 3, 0);
 
 -- --------------------------------------------------------
 
@@ -170,7 +179,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `inforecept`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inforecept`  AS  select `recept`.`ID` AS `ID`,`recept`.`name` AS `ReceptNamn`,`recept`.`description` AS `description`,`tag`.`name` AS `TagNamn`,`user`.`Name` AS `Author` from ((`recept` join `tag`) join `user`) where ((`tag`.`ID` = `recept`.`tag_id`) and (`user`.`ID` = `recept`.`author_id`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inforecept`  AS  select `recept`.`ID` AS `ID`,`recept`.`name` AS `ReceptName`,`recept`.`description` AS `description`,`users`.`Name` AS `author`,`tag`.`name` AS `tagname` from ((`recept` join `users`) join `tag`) where ((`recept`.`tag_id` = `tag`.`ID`) and (`users`.`ID` = `recept`.`author_id`)) ;
 
 --
 -- Index för dumpade tabeller
@@ -201,9 +210,9 @@ ALTER TABLE `tag`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Index för tabell `user`
+-- Index för tabell `users`
 --
-ALTER TABLE `user`
+ALTER TABLE `users`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -224,17 +233,17 @@ ALTER TABLE `ingrediense`
 -- AUTO_INCREMENT för tabell `recept`
 --
 ALTER TABLE `recept`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT för tabell `tag`
 --
 ALTER TABLE `tag`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
--- AUTO_INCREMENT för tabell `user`
+-- AUTO_INCREMENT för tabell `users`
 --
-ALTER TABLE `user`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `users`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

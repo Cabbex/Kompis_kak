@@ -35,7 +35,7 @@ public class User {
             String password = userPass.substring(userPass.indexOf(":") + 1);
 
             Connection connection = ConnectionFactory.createConnection();
-            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user WHERE name = ?");
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE name = ?");
             stmt.setString(1, username);
             ResultSet data = stmt.executeQuery();
             data.next();
@@ -71,24 +71,26 @@ public class User {
         String hashpw = BCrypt.hashpw(password, BCrypt.gensalt());
         try {
             Connection connection = ConnectionFactory.createConnection();
-            PreparedStatement stmt = connection.prepareStatement("SELECT user.name FROM user WHERE user.name = ?");
+            PreparedStatement stmt = connection.prepareStatement("SELECT users.Name FROM `users` WHERE users.Name = ? ");
             stmt.setString(1, username);
             ResultSet data = stmt.executeQuery();
             data.next();
-            if (!(data.getString("name").equals(username))) {
-                stmt = connection.prepareStatement("INSERT INTO `user`(`ID`, `Name`, `password`, `Privileges`, `Fav_ID`) VALUES (null,?,?,?,0) ");
+            System.out.println(data.first());
+            if (data.first()) {
+                System.out.println("Användare finns redan");
+                connection.close();
+                return false;
+            } else {
+                stmt = connection.prepareStatement("INSERT INTO `users`(`ID`, `Name`, `password`, `Privileges`, `Fav_ID`) VALUES (null,?,?,?,0) ");
                 stmt.setString(1, username);
                 stmt.setString(2, hashpw);
                 stmt.setInt(3, 1);
                 stmt.executeUpdate();
                 connection.close();
                 return true;
-
             }
-            connection.close();
-            return false;
         } catch (Exception e) {
-            System.out.println("user" + e);
+            System.out.println("postUser: " + e);
         }
         return false;
     }

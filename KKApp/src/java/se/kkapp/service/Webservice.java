@@ -135,9 +135,9 @@ public class Webservice {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUser(String body) {
         if (!User.createUser(body)) {
-            return Response.serverError().build();
+            return Response.status(406).build();
         }
-        return Response.ok().build();
+        return Response.status(201).build();
     }
 
 }
