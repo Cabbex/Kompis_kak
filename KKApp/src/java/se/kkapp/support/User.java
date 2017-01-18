@@ -40,10 +40,6 @@ public class User {
             ResultSet data = stmt.executeQuery();
             data.next();
             String hashedPass = data.getString("password");
-            System.out.println("Privileges: " + data.getInt("Privileges"));
-            System.out.println("Name: " + username);
-            System.out.println("Password: " + password);
-            System.out.println("Password: " + data.getString("password"));
             if (data.getInt("Privileges") >= assumedPrivileges) {
                 connection.close();
                 return BCrypt.checkpw(password, hashedPass);
@@ -75,7 +71,6 @@ public class User {
             stmt.setString(1, username);
             ResultSet data = stmt.executeQuery();
             data.next();
-            System.out.println(data.first());
             if (data.first()) {
                 System.out.println("Användare finns redan");
                 connection.close();

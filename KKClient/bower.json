@@ -1,13 +1,27 @@
 {
-    "name": "KKClient",
-    "version": "1.0.0",
-    "main": "path/to/main.css",
-    "ignore": [
-        ".jshintrc",
-        "**/*.txt"
-    ],
-    "dependencies": {
-    },
-    "devDependencies": {
-    }
+  "name": "Kompis_kak",
+  "version": "1.0.0",
+  "main": "path/to/main.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public_html/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-router": "^0.3.2",
+    "bootstrap": "^3.3.7",
+    "angular": "^1.6.1"
+  },
+  "devDependencies": {},
+  "homepage": "https://github.com/Cabbex/Kompis_kak",
+  "authors": [
+    "Casper Björk <erik.casper.bjork@gmail.com>"
+  ],
+  "description": "The needed components for the KK website",
+  "license": "MIT"
 }
