@@ -11,14 +11,14 @@ and open the template in the editor.
 body{
     margin: 0px;
     padding: 0px;
-
 }
-
 
 .headpiece {
     width: 100%;
-    height: 10vh;
+    height: 50px;
     background-color: lightblue;
+    margin: 0;
+    padding: 0;
 }
 
 .headTitle{
@@ -31,5 +31,38 @@ body{
 .headTitleText{
     text-align: center;
     vertical-align: middle;
-    line-height: 10vh;
+    line-height: 50px;
+}
+
+.headLogin{
+    width: 100%;
+    height: 40px;
+    background-color: #31708f;
+    padding: 0;
+    margin:0;
+}
+.headLogin:hover{
+    width: 100%;
+    height: 40px;
+    background-color: lightblue;
+    cursor: pointer;
+    padding: 0;
+    margin:0;
+}
+
+.headLoginText{
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    line-height: 40px;
+}
+
+.recipename{
+    font-size: 25px;
+    padding: 10px;
+}
+.recipedesc{
+    font-size: 15px;
+    padding: 5px;
+    color: gray;
 }
