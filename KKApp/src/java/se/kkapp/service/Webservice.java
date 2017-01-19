@@ -139,5 +139,14 @@ public class Webservice {
         }
         return Response.status(201).build();
     }
+    
+    @GET
+    @Path("/user")
+    public Response checkUser(@Context HttpHeaders httpHeaders){
+        if(!User.authenticate(httpHeaders, 0)){
+            return Response.status(401).build();
+        }
+        return Response.status(200).build();
+    }
 
 }
