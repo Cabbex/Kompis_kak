@@ -46,7 +46,16 @@ module.service("kkService", function ($q, $http, $rootScope) {
         return deffer.promise;
     };
     
-    this.checkLogin = function(){
-        
+    this.checkLogin = function(username, password){
+        var url="http://localhost:8080/KKApp/webresources/user";
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+        $http({
+           url: url,
+           method: "GET",
+           headers: {'Authorization': auth}
+        }).then(function (){
+            $rootScope.username = username;
+            $rootScope.password = password;
+        });
     };
 });
