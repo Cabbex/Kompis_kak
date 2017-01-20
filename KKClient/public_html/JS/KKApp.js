@@ -11,19 +11,21 @@ module.config(function ($urlRouterProvider, $stateProvider) {
 });
 
 module.controller("headerCtrl", function ($scope, $rootScope, kkService) {
-    $scope.submitForm = function () {
-        console.log($scope.username);
-        console.log($scope.password);
-        kkService.checkLogin().then(function () {
-            $rootScope.username = $scope.username;
-            $rootScope.password = $scope.password;
-        }).error(function () {
-            console.log("Error i submitForm");
-        });
+    $scope.submitForm = function (login) {
+        if (login === true) {
+            kkService.checkLogin($scope.username, $scope.password);
+        } else {
+            kkService.createUser($scope.username, $scope.password); //Inte klar!
+        }
+    };
+    $scope.logout = function () {
+        console.log("Logout funktion");
+        $rootScope.logged = false;
+        $rootScope.username = "";
     };
 });
 
-module.controller("homeCtrl", function ($scope, $rootScope, kkService) {
+module.controller("homeCtrl", function ($scope, kkService) {
     var promise = kkService.getRecipe();
     promise.then(function (data) {
         $scope.recipes = data.data;
@@ -45,17 +47,23 @@ module.service("kkService", function ($q, $http, $rootScope) {
         });
         return deffer.promise;
     };
-    
-    this.checkLogin = function(username, password){
-        var url="http://localhost:8080/KKApp/webresources/user";
-        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+
+    this.checkLogin = function (username, password) {
+        var url = "http://localhost:8080/KKApp/webresources/user";
+        var auth = "Basic " + window.btoa(username + ":" + password);
         $http({
-           url: url,
-           method: "GET",
-           headers: {'Authorization': auth}
-        }).then(function (){
-            $rootScope.username = username;
-            $rootScope.password = password;
+            url: url,
+            method: "GET",
+            headers: {'Authorization': auth}
+        }).then(function (status) {
+            if (status.status === 200) {
+                $rootScope.username = username;
+                $rootScope.logged = true;
+            } else {
+                $rootScope.logged = false;
+                $rootScope.username = "";
+            }
         });
     };
+
 });

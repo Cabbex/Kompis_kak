@@ -38,7 +38,7 @@ public class DBBean {
                 JAB.add(Json.createObjectBuilder()
                         .add("name", name)
                         .add("desc", desc)
-                        .add("tagnamn:", tag)
+                        .add("tagnamn", tag)
                         .add("author", author));
             }
             connection.close();

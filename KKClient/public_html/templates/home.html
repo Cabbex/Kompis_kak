@@ -1,10 +1,12 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <table class="table table-hover">
+        <div class="col-md-8 col-md-offset-2 bodycolor">
+            <h1>Förslag till recept</h1>
+            <table class="table">
+                <tr><th class='recipename'>Recept</th><th>Tag</th></tr>
                 <tr ng-repeat="recipe in recipes">
                     <td class='recipename'>{{recipe.name}}</td>
-                    <td class="recipedesc">{{recipe.tagname}}</td>
+                    <td class="recipedesc">{{recipe.tagnamn}}</td>
                 </tr>
             </table>
         </div>
