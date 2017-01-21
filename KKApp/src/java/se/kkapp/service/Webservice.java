@@ -36,9 +36,6 @@ public class Webservice {
     @Path("/recept")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRecept(@Context HttpHeaders httpHeaders) {
-        if (!User.authenticate(httpHeaders, 0)) {
-            return Response.status(401).build();
-        }
         JsonArray data = DBB.getRecept();
 
         if (data == null) {
@@ -87,11 +84,27 @@ public class Webservice {
 
     @GET
     @Path("/ingrediense/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getIngrediens(@PathParam("id") int id, @Context HttpHeaders httpHeaders) {
-        if (!User.authenticate(httpHeaders, 0)) {
+        if (!User.authenticate(httpHeaders, 1)) {
             return Response.status(401).build();
         }
         JsonArray data = DBB.getIngrediense(id);
+
+        if (data == null) {
+            return Response.serverError().build();
+        }
+        return Response.ok(data).build();
+    }
+
+    @GET
+    @Path("/ingrediense")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllIngrediens(@Context HttpHeaders httpHeaders) {
+        if (!User.authenticate(httpHeaders, 1)) {
+            return Response.status(401).build();
+        }
+        JsonArray data = DBB.getAllIngrediense();
 
         if (data == null) {
             return Response.serverError().build();
@@ -124,12 +137,25 @@ public class Webservice {
         return Response.ok().build();
     }
 
+    @GET
+    @Path("/tag")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTags(@Context HttpHeaders httpHeaders) {
+        JsonArray data = DBB.getTags();
+
+        if (data == null) {
+            return Response.serverError().build();
+        }
+
+        return Response.ok(data).build();
+    }
+
     /*            
     [{
     "name": "Casper",
     "password": "Passwooord",
     }]
-    */
+     */
     @POST
     @Path("/user")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -139,14 +165,19 @@ public class Webservice {
         }
         return Response.status(201).build();
     }
-    
+
     @GET
     @Path("/user")
-    public Response checkUser(@Context HttpHeaders httpHeaders){
-        if(!User.authenticate(httpHeaders, 0)){
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkUser(@Context HttpHeaders httpHeaders) {
+        if (!User.authenticate(httpHeaders, 0)) {
             return Response.status(401).build();
         }
-        return Response.status(200).build();
+        JsonArray data = User.getUser(httpHeaders);
+        if (data == null) {
+            return Response.serverError().build();
+        }
+        return Response.ok(data).build();
     }
 
 }

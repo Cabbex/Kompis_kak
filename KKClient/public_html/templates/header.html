@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" ng-controller="headerCtrl">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12">
             <div class="headpiece">
@@ -17,10 +17,10 @@
                 <div class="headProfile">
                     <p class='headText'>Inloggad som: {{username}}</p>
                 </div>
-                <div class="headBtn">
-                    <p class='headText'>Lägg till recept</p>
+                <div class="headBtn" ui-sref="home">
+                    <p class='headText'>Startsida</p>
                 </div>
-                <div class="headBtn">
+                <div class="headBtn" ui-sref="addRecipe">
                     <p class='headText'>Lägg till recept</p>
                 </div>
                 <div class="headBtn">
@@ -45,7 +45,7 @@
                     <label>Användarnamn <input class='input-group input-group-lg' ng-model="username" type="text"/></label><br/>
                     <label>Lösenord <input class='input-group input-group-lg' ng-model="password" type="password"/></label><br/>
                     <div class="modal-footer">
-                        <input class="btn btn-primary btn-block" ng-click="submitForm(false)" data-dismiss="modal" type="submit" value="Registrera" />
+                        <a class="abtn" ng-click="submitForm(false)" data-dismiss="modal">Har du inget konto? Klicka här när du skrivigt in ditt användarnamn och lösenord.</a>
                         <input class="btn btn-primary btn-block" ng-click="submitForm(true)" data-dismiss="modal" type="submit" value="Logga in" />
                     </div>
                 </form>

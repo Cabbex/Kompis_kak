@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="row">
+        <div class='col-md-8 col-md-offset-2 bodycolor'>
+            <h1>Lägg till recept här!</h1>
+            <div class='well'>
+                <form>
+                    <label>Namn: 
+                        <input type='text'/>
+                    </label>
+                    <br/>
+                    <label>Beskrivning:
+                        <textarea></textarea>
+                    </label>
+                    <br/>
+                    <label>Tag:
+                        <select>
+                            <option ng-repeat='tag in tags' value='{{tag.id}}'>{{tag.tagname}}</option>
+                        </select>
+                    </label>
+                    <br/>
+                    <input class='btn btn-default btn-block' value='Spara inställningar'/>
+                </form>
+            </div>
+            <div class="well">
+                <form>
+                    <label>Ingrediense:
+                        <select ng-model="ingrediens_id">
+                            <option ng-repeat="ingrediense in ingredienses" value="{{ingrediense.id}}">{{ingrediense.ingredienseName}}</option>
+                        </select>
+                    </label>
+                    <label>Mängd:
+                        <input type="text" ng-model="amount"/>
+                    </label>
+                    <input class='btn btn-default' value='Lägg till ingrediens' ng-click="insertIngr()"/>
+                </form>
+            </div>
+            <div class='well'>
+                <h2>Förhands titt</h2>
+                <h3>Receptets information</h3>
+                <h3>Receptets ingredienser</h3>
+                <table class='table'>
+                    <tr><th class='recipename'>Ingrediens</th><th class="recipename">Mängd</th></tr>
+                    <tr ng-repeat="ingrediens in PreviewIngr">
+                        <td class='recipename'>{{ingrediens.ingrediens}}</td>
+                        <td class="recipedesc">{{ingrediens.amount}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

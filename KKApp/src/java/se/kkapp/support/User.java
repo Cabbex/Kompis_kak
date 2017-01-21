@@ -9,10 +9,12 @@ import com.mysql.jdbc.Connection;
 import java.io.StringReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Base64;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.core.HttpHeaders;
@@ -33,7 +35,6 @@ public class User {
             String userPass = new String(decoded);
             String username = userPass.substring(0, userPass.indexOf(":"));
             String password = userPass.substring(userPass.indexOf(":") + 1);
-
             Connection connection = ConnectionFactory.createConnection();
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE name = ?");
             stmt.setString(1, username);
@@ -88,5 +89,38 @@ public class User {
             System.out.println("postUser: " + e);
         }
         return false;
+    }
+
+    public static JsonArray getUser(HttpHeaders httpHeader) {
+        String username = null;
+        try {
+            List<String> authHeader = httpHeader.getRequestHeader(HttpHeaders.AUTHORIZATION);
+            String header = authHeader.get(0);
+            header = header.substring(header.indexOf(" ") + 1);
+            byte[] decoded = Base64.getDecoder().decode(header);
+            String userPass = new String(decoded);
+            username = userPass.substring(0, userPass.indexOf(":"));
+        } catch (Exception e) {
+            System.out.println("Get HttpHeader : "+e);
+        }
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM `users` WHERE users.Name = ?");
+            stmt.setString(1, username);
+            ResultSet data = stmt.executeQuery();
+            JsonArrayBuilder JAB = Json.createArrayBuilder();
+            data.next();
+            int id = data.getInt("ID");
+            String name = data.getString("Name");
+
+            JAB.add(Json.createObjectBuilder()
+                    .add("id", id)
+                    .add("name", name));
+            connection.close();
+            return JAB.build();
+        } catch (Exception e) {
+            System.out.println("Fail på getUser: " + e);
+        }
+        return null;
     }
 }

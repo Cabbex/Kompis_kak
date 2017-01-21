@@ -16,7 +16,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-/bower_components
+KKClient/public_html/bower_components
 # =========================
 # Operating System Files
 # =========================

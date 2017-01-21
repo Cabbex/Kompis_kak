@@ -30,12 +30,14 @@ public class DBBean {
             ResultSet data = stmt.executeQuery(sql);
             JsonArrayBuilder JAB = Json.createArrayBuilder();
             while (data.next()) {
+                int id = data.getInt("ID");
                 String name = data.getString("ReceptName");
                 String desc = data.getString("description");
                 String tag = data.getString("tagname");
                 String author = data.getString("author");
 
                 JAB.add(Json.createObjectBuilder()
+                        .add("id", id)
                         .add("name", name)
                         .add("desc", desc)
                         .add("tagnamn", tag)
@@ -48,9 +50,9 @@ public class DBBean {
         }
         return null;
     }
-    
+
     public JsonArray getIngrediense(int id) {
-        try {          
+        try {
             Connection connection = ConnectionFactory.createConnection();
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM infoingrediense WHERE recept_id = ?");
             stmt.setInt(1, id);
@@ -198,8 +200,7 @@ public class DBBean {
             "ingrediense": 1
             }
         ]
-    */
-    
+     */
     public boolean putIngrediense(String body, int id) {
         try {
             Connection connection = ConnectionFactory.createConnection();
@@ -224,5 +225,51 @@ public class DBBean {
             System.out.println("putIngrediense: " + exception);
         }
         return false;
+    }
+
+    public JsonArray getAllIngrediense() {
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ingrediense");
+            ResultSet data = stmt.executeQuery();
+            JsonArrayBuilder JAB = Json.createArrayBuilder();
+            while (data.next()) {
+                String name = data.getString("name");
+                int id = data.getInt("id");
+
+                JAB.add(Json.createObjectBuilder()
+                        .add("id", id)
+                        .add("ingredienseName", name));
+            }
+            connection.close();
+            return JAB.build();
+        } catch (Exception e) {
+            System.out.println("Fail på getAllIngrediense: " + e);
+        }
+        return null;
+    }
+
+    public JsonArray getTags() {
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM tag");
+            ResultSet data = stmt.executeQuery();
+            JsonArrayBuilder JAB = Json.createArrayBuilder();
+            while (data.next()) {
+                String name = data.getString("name");
+                String desc = data.getString("description");
+                int id = data.getInt("id");
+
+                JAB.add(Json.createObjectBuilder()
+                        .add("id", id)
+                        .add("tagname", name)
+                        .add("desc", desc));
+            }
+            connection.close();
+            return JAB.build();
+        } catch (Exception e) {
+            System.out.println("Fail på getTags: " + e);
+        }
+        return null;
     }
 }
