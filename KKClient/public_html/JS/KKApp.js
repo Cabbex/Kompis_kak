@@ -48,12 +48,12 @@ module.controller("addCtrl", function ($scope, $rootScope, kkService) {
     });
 
     //Utdata
-    $scope.PostObject = [];
-    $scope.PreviewIngr = [];
-    var ingredient_name;
+    $scope.PostIngredient = [];
+    $scope.newRecipedata = [];
     $scope.insertIngr = function () {
-        var JSONObject = {"recipe_id": $scope.Recipe_id, "amount": $scope.amount, "ingrediens": $scope.ingrediens_id};
-        $scope.PostObject.push(JSONObject);
+        var JSONObject = {"recipe_id": $scope.Recipe_id, "amount": $scope.amount, "ingrediens": Number($scope.ingrediens_id)};
+        console.log(typeof(JSONObject.ingrediens));
+        $scope.PostIngredient.push(JSONObject);
         //funkar inte.
 //        for (var i = 0; i < $scope.ingredienses.length; i++) {
 //            console.log($scope.ingredienses[i].id + " " + $scope.ingrediens_id);
@@ -64,6 +64,22 @@ module.controller("addCtrl", function ($scope, $rootScope, kkService) {
 //        var PreviewObject = {"amount": $scope.amount, "name": ingredient_name};
 //        console.log(PreviewObject);
 //        $scope.PreviewIngr.push(PreviewObject);
+    };
+
+    $scope.savePreset = function () {
+        var JSONObject = {"rname": $scope.recipeName,
+            "description": $scope.descInput,
+            "author": $rootScope.username,
+            "tag": $scope.selectedTag};
+        $scope.newRecipedata[0] = JSONObject;
+    };
+
+    $scope.postRecipeCtrl = function () {
+        if ($scope.newRecipedata === null || $scope.PostIngredient === null) {
+            console.log("Var god och skriv in data innan du skickar iväg det."); //Gör så att knappen syns när man har data!
+        } else {
+            kkService.postRecipe($scope.newRecipedata, $scope.PostIngredient);
+        }
     };
 });
 
@@ -78,6 +94,9 @@ module.controller("homeCtrl", function ($scope, kkService) {
 
 
 module.service("kkService", function ($q, $http, $rootScope) {
+
+    //Get services
+
     this.getRecipe = function () {
         var deffer = $q.defer();
         var url = "http://localhost:8080/KKApp/webresources/recept";
@@ -104,6 +123,7 @@ module.service("kkService", function ($q, $http, $rootScope) {
         });
         return deffer.promise;
     };
+    
     this.getAllTags = function () {
         var deffer = $q.defer();
         var url = "http://localhost:8080/KKApp/webresources/tag";
@@ -118,6 +138,8 @@ module.service("kkService", function ($q, $http, $rootScope) {
         });
         return deffer.promise;
     };
+
+    //User services
 
     this.checkLogin = function (username, password) {
         var url = "http://localhost:8080/KKApp/webresources/user";
@@ -154,6 +176,32 @@ module.service("kkService", function ($q, $http, $rootScope) {
             url: url,
             method: "POST",
             data: data
+        }).then(function (data) {
+            console.log(data.status);
+        });
+    };
+
+    //Post services
+
+    this.postRecipe = function (RecipeData, IngredienseData) {
+        var url = "http://localhost:8080/KKApp/webresources/recept";
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+        $http({
+            url: url,
+            method: "POST",
+            headers: {'Authorization': auth},
+            data: RecipeData
+        }).then(function (data) {
+            console.log(data.status);
+        });
+
+        url = "http://localhost:8080/KKApp/webresources/ingrediense";
+        auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+        $http({
+            url: url,
+            method: "POST",
+            headers: {'Authorization': auth},
+            data: IngredienseData
         }).then(function (data) {
             console.log(data.status);
         });

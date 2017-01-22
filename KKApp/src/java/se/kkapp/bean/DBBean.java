@@ -111,7 +111,7 @@ public class DBBean {
         try {
             Connection connection = ConnectionFactory.createConnection();
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO `recept`(`ID`, `name`, `description`, `author_id`, `tag_id`) "
-                    + "VALUES (null,?,?,(SELECT user.ID FROM user WHERE user.Name = " + "'" + author + "'" + "),(SELECT tag.ID FROM tag WHERE tag.name = " + "'" + tag + "'" + "))");
+                    + "VALUES (null,?,?,(SELECT users.ID FROM users WHERE users.Name = " + "'" + author + "'" + "),(SELECT tag.ID FROM tag WHERE tag.name = " + "'" + tag + "'" + "))");
             stmt.setString(1, rname);
             stmt.setString(2, desc);
             stmt.executeUpdate();
