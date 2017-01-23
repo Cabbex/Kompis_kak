@@ -11,6 +11,10 @@ module.config(function ($urlRouterProvider, $stateProvider) {
         url: "/addRecipe",
         templateUrl: "templates/addRecipe.html",
         controller: "addCtrl"
+    }).state("recipe", {
+        url: "/recipe/:id",
+        templateUrl: "templates/recipe.html",
+        controller: "repiceCtrl"
     });
 });
 
@@ -52,7 +56,7 @@ module.controller("addCtrl", function ($scope, $rootScope, kkService) {
     $scope.newRecipedata = [];
     $scope.insertIngr = function () {
         var JSONObject = {"recipe_id": $scope.Recipe_id, "amount": $scope.amount, "ingrediens": Number($scope.ingrediens_id)};
-        console.log(typeof(JSONObject.ingrediens));
+        console.log(typeof (JSONObject.ingrediens));
         $scope.PostIngredient.push(JSONObject);
         //funkar inte.
 //        for (var i = 0; i < $scope.ingredienses.length; i++) {
@@ -89,6 +93,28 @@ module.controller("homeCtrl", function ($scope, kkService) {
     promise.then(function (data) {
         $scope.recipes = data.data;
     });
+    
+    $scope.gotoRecipe = function (id){
+        header("http://localhost:8383/KKClient/index.html#!/recipe/"+id,window);
+    };
+});
+
+module.controller("recipeCtrl", function ($scope, kkService, $stateParams) {
+    var id = $stateParams;
+    var promise = kkService.getRecipe();
+    promise.then(function (data) {
+        for (var i = 1; i <= data.length; i++) {
+            if (data.data[i].id === id) {
+                $scope.recipe = data.data[i];
+                console.log(data.data[i]);
+            }
+
+        }
+    });
+    promise = kkService.getAllIngrediense();
+    promise.then(function (data){
+        console.log(data.data);
+    });
 });
 
 
@@ -123,7 +149,7 @@ module.service("kkService", function ($q, $http, $rootScope) {
         });
         return deffer.promise;
     };
-    
+
     this.getAllTags = function () {
         var deffer = $q.defer();
         var url = "http://localhost:8080/KKApp/webresources/tag";
