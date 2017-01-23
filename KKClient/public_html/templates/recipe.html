@@ -1,8 +1,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 bodycolor">
-           <h1>{{$scope.recipe.name}}</h1>
-           <p>{{$scope.recipe.beskrivning}}</p>
+           <h1>{{recipe.name}}</h1>
+           <p>{{recipe.desc}}</p>
            <table class="table">
                <tr><th>Ingrediens</th><th>Mängd</th></tr>
                <tr ng-repeat="ingr in ingrs">
@@ -10,6 +10,7 @@
                    <td>{{ingr.amount}}</td>
                </tr>
            </table>
+           <p>Gjord av {{recipe.author}}</p>
         </div>
     </div>
 </div>

@@ -14,7 +14,7 @@ module.config(function ($urlRouterProvider, $stateProvider) {
     }).state("recipe", {
         url: "/recipe/:id",
         templateUrl: "templates/recipe.html",
-        controller: "repiceCtrl"
+        controller: "recipeCtrl"
     });
 });
 
@@ -95,7 +95,7 @@ module.controller("homeCtrl", function ($scope, kkService) {
     });
     
     $scope.gotoRecipe = function (id){
-        header("http://localhost:8383/KKClient/index.html#!/recipe/"+id,window);
+        window.location.href = "http://localhost:8383/KKClient/index.html#!/recipe/"+id;
     };
 });
 
@@ -103,17 +103,16 @@ module.controller("recipeCtrl", function ($scope, kkService, $stateParams) {
     var id = $stateParams;
     var promise = kkService.getRecipe();
     promise.then(function (data) {
-        for (var i = 1; i <= data.length; i++) {
-            if (data.data[i].id === id) {
+        for (var i = 0; i <= data.data.length-1; i++) {
+            if (data.data[i].id === Number(id.id)) {
                 $scope.recipe = data.data[i];
-                console.log(data.data[i]);
             }
 
         }
     });
-    promise = kkService.getAllIngrediense();
+    promise = kkService.getIngrediense(Number(id.id));
     promise.then(function (data){
-        console.log(data.data);
+        $scope.ingrs = data.data;
     });
 });
 
@@ -138,6 +137,21 @@ module.service("kkService", function ($q, $http, $rootScope) {
     this.getAllIngrediense = function () {
         var deffer = $q.defer();
         var url = "http://localhost:8080/KKApp/webresources/ingrediense";
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+
+        $http({
+            url: url,
+            method: "GET",
+            headers: {'Authorization': auth}
+        }).then(function (data) {
+            deffer.resolve(data);
+        });
+        return deffer.promise;
+    };
+    
+    this.getIngrediense = function (id) {
+        var deffer = $q.defer();
+        var url = "http://localhost:8080/KKApp/webresources/ingrediense/"+id;
         var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
 
         $http({
