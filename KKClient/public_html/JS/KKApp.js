@@ -15,6 +15,10 @@ module.config(function ($urlRouterProvider, $stateProvider) {
         url: "/recipe/:id",
         templateUrl: "templates/recipe.html",
         controller: "recipeCtrl"
+    }).state("profile", {
+        url: "/profil",
+        templateUrl: "templates/profile.html",
+        controller: "profileCtrl"
     });
 });
 
@@ -93,17 +97,18 @@ module.controller("homeCtrl", function ($scope, kkService) {
     promise.then(function (data) {
         $scope.recipes = data.data;
     });
-    
-    $scope.gotoRecipe = function (id){
-        window.location.href = "http://localhost:8383/KKClient/index.html#!/recipe/"+id;
+
+    $scope.gotoRecipe = function (id) {
+        window.location.href = "http://localhost:8383/KKClient/index.html#!/recipe/" + id;
     };
 });
+
 
 module.controller("recipeCtrl", function ($scope, kkService, $stateParams) {
     var id = $stateParams;
     var promise = kkService.getRecipe();
     promise.then(function (data) {
-        for (var i = 0; i <= data.data.length-1; i++) {
+        for (var i = 0; i <= data.data.length - 1; i++) {
             if (data.data[i].id === Number(id.id)) {
                 $scope.recipe = data.data[i];
             }
@@ -111,12 +116,29 @@ module.controller("recipeCtrl", function ($scope, kkService, $stateParams) {
         }
     });
     promise = kkService.getIngrediense(Number(id.id));
-    promise.then(function (data){
+    promise.then(function (data) {
         $scope.ingrs = data.data;
     });
 });
 
+module.controller("profileCtrl", function ($scope, kkService, $rootScope) {
+    var recipeArray = [];
+    var promise = kkService.getRecipe();
+    promise.then(function (data) {
+        for (var i = 0; i <= data.data.length - 1; i++) {
+            if (data.data[i].author === $rootScope.username) {
+                recipeArray.push(data.data[i]);
+            }
+        }
 
+        $scope.userRecipe = recipeArray;
+        $scope.amountRecipe = recipeArray.length;
+    });
+
+    $scope.gotoRecipe = function (id) {
+        window.location.href = "http://localhost:8383/KKClient/index.html#!/recipe/" + id;
+    };
+});
 
 module.service("kkService", function ($q, $http, $rootScope) {
 
@@ -148,10 +170,10 @@ module.service("kkService", function ($q, $http, $rootScope) {
         });
         return deffer.promise;
     };
-    
+
     this.getIngrediense = function (id) {
         var deffer = $q.defer();
-        var url = "http://localhost:8080/KKApp/webresources/ingrediense/"+id;
+        var url = "http://localhost:8080/KKApp/webresources/ingrediense/" + id;
         var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
 
         $http({

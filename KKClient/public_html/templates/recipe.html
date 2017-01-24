@@ -1,16 +1,22 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2 bodycolor">
-           <h1>{{recipe.name}}</h1>
-           <p>{{recipe.desc}}</p>
-           <table class="table">
-               <tr><th>Ingrediens</th><th>Mängd</th></tr>
-               <tr ng-repeat="ingr in ingrs">
-                   <td>{{ingr.name}}</td>
-                   <td>{{ingr.amount}}</td>
-               </tr>
-           </table>
-           <p>Gjord av {{recipe.author}}</p>
+        <div class="col-lg-12 col-md-12 col-xs-12 bodycolor">
+            <h1 class="text-center">{{recipe.name}}</h1>
+            <p class="text-center"><b>Gjord av {{recipe.author}}</b></p>
+            <div class="col-lg-4 col-md-4 col-xs-12">
+                <table class="table">
+                    <tr><th>Ingrediens</th><th>Mängd</th></tr>
+                    <tr ng-repeat="ingr in ingrs">
+                        <td>{{ingr.name}}</td>
+                        <td>{{ingr.amount}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-8 col-md-8 col-xs-12">
+                <div class="well">
+                    <p>{{recipe.desc}}</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

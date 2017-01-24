@@ -89,14 +89,20 @@ body{
     line-height: 40px;
 }
 
-.recipename{
+.tableHeader{
     font-size: 25px;
     padding: 10px;
 }
-.recipedesc{
+
+.tableContent{
+    font-size: 20px;
+    padding: 5px;
+}
+
+.tableContentTag{
     font-size: 15px;
     padding: 5px;
-    color: gray;
+    color: grey;
 }
 
 .abtn{

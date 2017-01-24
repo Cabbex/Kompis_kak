@@ -86,9 +86,6 @@ public class Webservice {
     @Path("/ingrediense/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIngrediens(@PathParam("id") int id, @Context HttpHeaders httpHeaders) {
-        if (!User.authenticate(httpHeaders, 1)) {
-            return Response.status(401).build();
-        }
         JsonArray data = DBB.getIngrediense(id);
 
         if (data == null) {
@@ -101,9 +98,6 @@ public class Webservice {
     @Path("/ingrediense")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllIngrediens(@Context HttpHeaders httpHeaders) {
-        if (!User.authenticate(httpHeaders, 1)) {
-            return Response.status(401).build();
-        }
         JsonArray data = DBB.getAllIngrediense();
 
         if (data == null) {

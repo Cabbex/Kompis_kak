@@ -9,7 +9,6 @@ import com.mysql.jdbc.Connection;
 import java.io.StringReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Base64;
 import java.util.List;
 import javax.json.Json;
@@ -55,10 +54,12 @@ public class User {
         return false;
     }
 
-    /*            [{
+    /*
+    [{
     "name": "Casper",
     "password": "Passwooord"
-    }]*/
+    }]
+    */
     public static boolean createUser(String body) {
         JsonReader jsr = Json.createReader(new StringReader(body));
         JsonArray jsondata = jsr.readArray();
