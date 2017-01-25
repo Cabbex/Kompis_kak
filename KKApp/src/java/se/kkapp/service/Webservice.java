@@ -119,13 +119,13 @@ public class Webservice {
         return Response.ok().build();
     }
 
-    @PUT
+    @DELETE
     @Path("/ingrediense/{id}")
-    public Response putIngrediens(String body, @PathParam("id") int id, @Context HttpHeaders httpHeaders) {
+    public Response removeIngrediense(@PathParam("id") int id, @Context HttpHeaders httpHeaders) {
         if (!User.authenticate(httpHeaders, 1)) {
             return Response.status(401).build();
         }
-        if (!DBB.putIngrediense(body, id)) {
+        if (!DBB.removeIngrediense(id)) {
             return Response.serverError().build();
         }
         return Response.ok().build();

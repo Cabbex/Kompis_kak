@@ -37,7 +37,6 @@ module.controller("headerCtrl", function ($scope, $rootScope, kkService) {
     };
 });
 
-
 module.controller("addCtrl", function ($scope, $rootScope, kkService) {
     // Indata
     var promise = kkService.getRecipe();
@@ -86,11 +85,11 @@ module.controller("addCtrl", function ($scope, $rootScope, kkService) {
         if ($scope.newRecipedata === null || $scope.PostIngredient === null) {
             console.log("Var god och skriv in data innan du skickar iväg det."); //Gör så att knappen syns när man har data!
         } else {
-            kkService.postRecipe($scope.newRecipedata, $scope.PostIngredient);
+            kkService.postRecipe($scope.newRecipedata);
+            kkService.postIngrediens($scope.PostIngredient);
         }
     };
 });
-
 
 module.controller("homeCtrl", function ($scope, kkService) {
     var promise = kkService.getRecipe();
@@ -103,14 +102,18 @@ module.controller("homeCtrl", function ($scope, kkService) {
     };
 });
 
+module.controller("recipeCtrl", function ($scope, kkService, $rootScope, $stateParams) {
+    //Indata
 
-module.controller("recipeCtrl", function ($scope, kkService, $stateParams) {
     var id = $stateParams;
     var promise = kkService.getRecipe();
     promise.then(function (data) {
         for (var i = 0; i <= data.data.length - 1; i++) {
             if (data.data[i].id === Number(id.id)) {
                 $scope.recipe = data.data[i];
+                if($scope.recipe.author === $rootScope.username){
+                    $scope.canEdit = true;
+                }
             }
 
         }
@@ -119,6 +122,64 @@ module.controller("recipeCtrl", function ($scope, kkService, $stateParams) {
     promise.then(function (data) {
         $scope.ingrs = data.data;
     });
+
+    promise = kkService.getAllIngrediense();
+    promise.then(function (data) {
+        $scope.ingredienses = data.data;
+    });
+
+    promise = kkService.getAllTags();
+    promise.then(function (data) {
+        $scope.tags = data.data;
+    });
+
+
+    //Utdata
+
+    $scope.removeIngrediens = function (id) { //Ta bort den raden som blir klickad på.
+        kkService.removeIngr(id);
+    };
+
+    $scope.insertIngr = function () {
+        var JSONObject = {"recipe_id": Number(id.id), "amount": $scope.amount, "ingrediens": Number($scope.ingrediens_id)};
+        console.log(JSONObject);
+        $scope.PostIngredient = [];
+        $scope.PostIngredient.push(JSONObject);
+        if ($scope.PostIngredient === null) {
+            console.log("Väl något innan du skickar");
+        } else {
+            kkService.postIngrediens($scope.PostIngredient);
+        }
+        //Uppdaterar tabellen
+        promise = kkService.getIngrediense(Number(id.id));
+        promise.then(function (data) {
+            $scope.ingrs = data.data;
+        });
+
+    };
+
+    $scope.removeRecipe = function () {
+        kkService.removeRecipe(Number(id.id));
+    };
+
+    function refresh() {
+        $scope.editing = false;
+        window.location.href = "http://localhost:8383/KKClient/index.html#!/";
+    }
+
+    $scope.saveChanges = function () {
+        var putArray = [{"rname": $scope.newName, "description": $scope.newDesc, "author": $rootScope.username, "tag": $scope.newTag}];
+        kkService.putRecipe(putArray, Number(id.id));
+        setTimeout(refresh(), 5000);
+    };
+
+    //Funktioner
+    
+    $scope.edit = function () {
+        $scope.editing = true;
+        $scope.newName = $scope.recipe.name;
+        $scope.newDesc = $scope.recipe.desc;
+    };
 });
 
 module.controller("profileCtrl", function ($scope, kkService, $rootScope) {
@@ -245,7 +306,7 @@ module.service("kkService", function ($q, $http, $rootScope) {
 
     //Post services
 
-    this.postRecipe = function (RecipeData, IngredienseData) {
+    this.postRecipe = function (RecipeData) {
         var url = "http://localhost:8080/KKApp/webresources/recept";
         var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
         $http({
@@ -256,14 +317,55 @@ module.service("kkService", function ($q, $http, $rootScope) {
         }).then(function (data) {
             console.log(data.status);
         });
-
-        url = "http://localhost:8080/KKApp/webresources/ingrediense";
-        auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+    };
+    this.postIngrediens = function (IngredienseData) {
+        var url = "http://localhost:8080/KKApp/webresources/ingrediense";
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
         $http({
             url: url,
             method: "POST",
             headers: {'Authorization': auth},
             data: IngredienseData
+        }).then(function (data) {
+            console.log(data.status);
+        });
+    };
+
+    //Delete services
+    this.removeIngr = function (id) {
+        var url = "http://localhost:8080/KKApp/webresources/ingrediense/" + id;
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+        $http({
+            url: url,
+            method: "DELETE",
+            headers: {'Authorization': auth}
+        }).then(function (data) {
+            console.log(data.status);
+        });
+    };
+    
+    this.removeRecipe = function (id) {
+        var url = "http://localhost:8080/KKApp/webresources/recept/" + id;
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+        $http({
+            url: url,
+            method: "DELETE",
+            headers: {'Authorization': auth}
+        }).then(function (data) {
+            console.log(data.status);
+        });
+    };
+
+    //Put services
+
+    this.putRecipe = function (data, id) {
+        var url = "http://localhost:8080/KKApp/webresources/recept/" + id;
+        var auth = "Basic " + window.btoa($rootScope.username + ":" + $rootScope.password);
+        $http({
+            url: url,
+            method: "PUT",
+            data: data,
+            headers: {'Authorization': auth}
         }).then(function (data) {
             console.log(data.status);
         });

@@ -1,7 +1,13 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12 bodycolor">
-            <h1 class="text-center">{{recipe.name}}</h1>
+            <h1 ng-show="!editing" class="text-center">{{recipe.name}} - <small>{{recipe.tagnamn}}</small></h1>
+            <label ng-show="editing"> Receptes namn: <input value="{{recipe.name}}" ng-model="newName"/></label>
+            <label ng-show="editing">Tag:
+                <select ng-model="newTag">
+                    <option ng-repeat='tag in tags' value='{{tag.tagname}}'>{{tag.tagname}}</option>
+                </select>
+            </label>
             <p class="text-center"><b>Gjord av {{recipe.author}}</b></p>
             <div class="col-lg-4 col-md-4 col-xs-12">
                 <table class="table">
@@ -9,12 +15,38 @@
                     <tr ng-repeat="ingr in ingrs">
                         <td>{{ingr.name}}</td>
                         <td>{{ingr.amount}}</td>
+                        <td ng-show="editing"><button class="btn btn-default" ng-click="removeIngrediens(ingr.id)">Ta bort</button></td>
                     </tr>
                 </table>
+                <button class="btn btn-primary" ng-click="edit()" ng-show="canEdit">Redigera</button>
+                <div class="well" ng-show="editing">
+                    <form>
+                        <label>Ingrediense:
+                            <select ng-model="ingrediens_id">
+                                <option ng-repeat="ingrediense in ingredienses" value="{{ingrediense.id}}">{{ingrediense.ingredienseName}}</option>
+                            </select>
+                        </label>
+                        <label>Mängd:
+                            <input type="text" ng-model="amount"/>
+                        </label>
+                        <input type="button" class='btn btn-default' value='Lägg till ingrediens' ng-click="insertIngr()"/>
+                    </form>
+                </div>
             </div>
             <div class="col-lg-8 col-md-8 col-xs-12">
-                <div class="well">
+                <div class="well" ng-show="!editing">
                     <p>{{recipe.desc}}</p>
+                </div>
+                <div class="well" ng-show="editing">
+                    <textarea ng-model="newDesc">{{recipe.desc}}</textarea>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-xs-12">
+                <div class="well" ng-show="editing">
+                    <button class="btn btn-success btn-block" ng-click="saveChanges()">Spara förändring</button>
+                </div>
+                <div class="well" ng-show="editing"> 
+                    <button class="btn btn-danger btn-block" ng-click="removeRecipe()">Ta bort recept</button>
                 </div>
             </div>
         </div>

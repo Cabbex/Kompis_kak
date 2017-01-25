@@ -59,10 +59,12 @@ public class DBBean {
             ResultSet data = stmt.executeQuery();
             JsonArrayBuilder JAB = Json.createArrayBuilder();
             while (data.next()) {
+                int collective_id = data.getInt("id");
                 String name = data.getString("name");
                 String desc = data.getString("amount");
 
                 JAB.add(Json.createObjectBuilder()
+                        .add("id", collective_id)
                         .add("name", name)
                         .add("amount", desc));
             }
@@ -134,7 +136,7 @@ public class DBBean {
         try {
             Connection connection = ConnectionFactory.createConnection();
             PreparedStatement stmt = connection.prepareStatement("UPDATE `recept` SET `ID`=?,`name`= ?,`description`=?,"
-                    + "`author_id`= (SELECT user.ID FROM user WHERE user.Name = " + "'" + author + "'" + ") ,"
+                    + "`author_id`= (SELECT users.ID FROM users WHERE users.Name = " + "'" + author + "'" + ") ,"
                     + "`tag_id`= (SELECT tag.ID FROM tag WHERE tag.name = " + "'" + tag + "'" + ") WHERE recept.ID = ?");
             stmt.setInt(1, id);
             stmt.setString(2, rname);
@@ -176,7 +178,7 @@ public class DBBean {
                 int recipe_id = jsono.getInt("recipe_id");
                 String amount = jsono.getString("amount");
                 int ingrediant_id = jsono.getInt("ingrediens");
-                stmt = connection.prepareStatement("INSERT INTO `recept_collective`(`recept_id`, `amount`, `ing_id`) VALUES (?,?,?)");
+                stmt = connection.prepareStatement("INSERT INTO `recept_collective`(id ,`recept_id`, `amount`, `ing_id`) VALUES (null,?,?,?)");
                 stmt.setInt(1, recipe_id);
                 stmt.setString(2, amount);
                 stmt.setInt(3, ingrediant_id);
@@ -185,44 +187,6 @@ public class DBBean {
             return true;
         } catch (Exception exception) {
             System.out.println("postIngrediens: " + exception);
-        }
-        return false;
-    }
-
-    /*  Used for testing! 
-    [
-            {
-            "amount": "4 tsk",
-            "ingrediense": 1
-            },
-            {
-            "amount": "5 tsk",
-            "ingrediense": 1
-            }
-        ]
-     */
-    public boolean putIngrediense(String body, int id) {
-        try {
-            Connection connection = ConnectionFactory.createConnection();
-            PreparedStatement stmt;
-            JsonReader jsr = Json.createReader(new StringReader(body));
-            JsonArray jsondata = jsr.readArray();
-            int size = jsondata.size();
-            for (int i = 1; i <= size; i++) {
-                JsonObject jsono = jsondata.getJsonObject(i - 1);
-                String amount = jsono.getString("amount");
-                int ingrediant_id = jsono.getInt("ingrediense");
-                stmt = connection.prepareStatement("UPDATE `recept_collective` SET `recept_id`=?,`amount`=?,`ing_id`=? WHERE recept_collective.recept_id = ? AND recept_collective.ing_id = ?");
-                stmt.setInt(1, id);
-                stmt.setString(2, amount);
-                stmt.setInt(3, ingrediant_id);
-                stmt.setInt(4, id);
-                stmt.setInt(5, ingrediant_id);
-                stmt.executeUpdate();
-            }
-            return true;
-        } catch (Exception exception) {
-            System.out.println("putIngrediense: " + exception);
         }
         return false;
     }
@@ -247,6 +211,20 @@ public class DBBean {
             System.out.println("Fail på getAllIngrediense: " + e);
         }
         return null;
+    }
+
+    public boolean removeIngrediense(int id) {
+        try {
+            Connection connection = ConnectionFactory.createConnection();
+            PreparedStatement stmt = connection.prepareStatement("DELETE FROM `recept_collective` WHERE recept_collective.id = ?");
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("RemoveIngr error: " + ex);
+        }
+        return false;
     }
 
     public JsonArray getTags() {
